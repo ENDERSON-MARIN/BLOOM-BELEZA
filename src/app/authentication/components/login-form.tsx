@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -22,28 +23,45 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
-const formSchema = z.object({
+
+const loginSchema = z.object({
   email: z.email("E-mail inválido!"),
   password: z.string("Senha inválida!").min(8, "Senha inválida!"),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: FormValues) {
-    console.log("FORMULARIO VALIDO E ENVIADO!");
-    console.log(values);
-  }
-
+  // AUHTENTICACION COM EMAIL E SENHA
+  const handleEmailLogin = async (values: z.infer<typeof loginSchema>) => {
+    await authClient.signIn.email(
+      {
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: () => {
+          route.push("/dashboard");
+          toast.success("Ben-vindo a plataforma!");
+        },
+        onError: () => {
+          toast.error(
+            "Email o senha inválidos, por favor verifique e tente novamente!",
+          );
+        },
+      },
+    );
+  };
   return (
     <>
       <Card>
