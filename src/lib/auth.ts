@@ -13,4 +13,17 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  //Define os models do better auth no schema do drizzle
+   user: {
+    modelName: "userTable",
+  },
+  session: { 
+    modelName: "sessionTable",
+  },
+  account: {
+    modelName: "accountTable",
+  },
+  verification: {
+    modelName: "verificationTable",
+  },
 });

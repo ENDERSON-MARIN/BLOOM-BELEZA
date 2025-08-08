@@ -1,7 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -22,13 +25,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
-const formSchema = z
+const registerSchema = z
   .object({
     name: z.string("Nome inválido.").trim().min(1, "Nome é obrigatório."),
     email: z.email("E-mail inválido."),
-    password: z.string("Senha inválida.").min(8, "Senha inválida."),
-    passwordConfirmation: z.string("Senha inválida.").min(8, "Senha inválida."),
+    password: z
+      .string("Senha inválida.")
+      .min(8, "A senha debe ter pelo menos 8 caracteres."),
+    passwordConfirmation: z
+      .string("Senha inválida.")
+      .min(8, "A senha debe ter pelo menos 8 caracteres."),
   })
   .refine(
     (data) => {
@@ -40,11 +48,13 @@ const formSchema = z
     },
   );
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
+  const router = useRouter();
+
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -53,9 +63,32 @@ const RegisterForm = () => {
     },
   });
 
-  function onSubmit(values: FormValues) {
-    console.log("FORMULARIO VALIDO E ENVIADO!");
-    console.log(values);
+  async function registerUser(values: z.infer<typeof registerSchema>) {
+    await authClient.signUp.email(
+      {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: () => {
+          toast.success(
+            "Sua conta foi criada com sucesso, pode fazer login para acessar a plataforma.",
+          );
+          form.reset();
+          router.push("/authentication");
+        },
+        onError: (response) => {
+          if (response.error.code === "USER_ALREADY_EXISTS") {
+            toast.error(
+              "Email ja cadastrado, por favor verifique e tente novamente.",
+            );
+            return;
+          }
+          toast.error("Erro ao criar conta, por favor tente mais tarde.");
+        },
+      },
+    );
   }
 
   return (
@@ -67,7 +100,10 @@ const RegisterForm = () => {
         </CardHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(registerUser)}
+            className="space-y-8"
+          >
             <CardContent className="grid gap-6">
               {/* Nome */}
               <FormField
@@ -135,7 +171,17 @@ const RegisterForm = () => {
               />
             </CardContent>
             <CardFooter>
-              <Button className="w-full" type="submit">Criar conta</Button>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Criar conta"
+                )}
+              </Button>
             </CardFooter>
           </form>
         </Form>
