@@ -24,7 +24,7 @@ export function PartnerBrands({
         {brands.map((brand, index) => (
           <Card
             key={index}
-            className="flex min-h-[60px] min-w-[106px] flex-col items-center justify-center border[#f1f1f1]  rounded-3xl"
+            className="border[#f1f1f1] flex min-h-[50px] min-w-[116px] flex-col items-center justify-center rounded-3xl"
           >
             <div className="flex flex-col items-center space-y-2">
               <div className="flex h-10 w-10 items-center justify-center">
@@ -37,7 +37,7 @@ export function PartnerBrands({
                 />
               </div>
             </div>
-            <span className="text-x color-black text-center font-semibold whitespace-nowrap">
+            <span className="color-black text-center text-sm font-semibold">
               {brand.name}
             </span>
           </Card>
