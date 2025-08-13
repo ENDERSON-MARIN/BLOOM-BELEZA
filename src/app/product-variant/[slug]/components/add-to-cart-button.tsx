@@ -11,10 +11,7 @@ interface AddToCartButtonProps {
   quantity: number;
 }
 
-const AddToCartButton = ({
-  productVariantId,
-  quantity,
-}: AddToCartButtonProps) => {
+const AddToCartButton = ({productVariantId, quantity }: AddToCartButtonProps) => {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationKey: ["addProductToCart", productVariantId, quantity],
