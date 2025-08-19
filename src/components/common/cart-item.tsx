@@ -19,11 +19,12 @@ interface CartItemProps {
   quantity: number;
 }
 
-const CartItem = ({ id, productName, productVariantId, productVariantName, productVariantImageUrl, productVariantPriceInCents, quantity }: CartItemProps) => {
+const CartItem = ({ id, productName, productVariantId, productVariantName, productVariantImageUrl, productVariantPriceInCents, quantity}: CartItemProps) => {
+  
   const removeProductFromCartMutation = useRemoveProductFromCart(id);
   const decreaseCartProductQuantityMutation = useDecreaseCartProduct(id);
-  const increaseCartProductQuantityMutation =
-    useIncreaseCartProduct(productVariantId);
+  const increaseCartProductQuantityMutation = useIncreaseCartProduct(productVariantId);
+
   const handleDeleteClick = () => {
     removeProductFromCartMutation.mutate(undefined, {
       onSuccess: () => {
@@ -34,6 +35,7 @@ const CartItem = ({ id, productName, productVariantId, productVariantName, produ
       },
     });
   };
+
   const handleDecreaseQuantityClick = () => {
     decreaseCartProductQuantityMutation.mutate(undefined, {
       onSuccess: () => {
@@ -41,6 +43,7 @@ const CartItem = ({ id, productName, productVariantId, productVariantName, produ
       },
     });
   };
+
   const handleIncreaseQuantityClick = () => {
     increaseCartProductQuantityMutation.mutate(undefined, {
       onSuccess: () => {
@@ -48,6 +51,7 @@ const CartItem = ({ id, productName, productVariantId, productVariantName, produ
       },
     });
   };
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
