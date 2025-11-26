@@ -4,7 +4,7 @@ import { db } from ".";
 import { categoryTable, productTable, productVariantTable } from "./schema";
 
 const productImages = {
-  Mochila: {
+  "Mochila": {
     Preta: [
       "https://d4lgxe9bm8juw.cloudfront.net/products/Acesso%CC%81rios/1/78f9fa3b_c793_472a_b183_e32495033da2.jpg",
     ],
